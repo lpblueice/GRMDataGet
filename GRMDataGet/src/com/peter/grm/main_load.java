@@ -8,7 +8,19 @@ public class main_load {
 	{
 		System.out.println("hello!");
 		
+		//String strGrmID = "20437182836";
+		//String strPasswd = "32345598";
+		
+		//String strADDR = "";
+		//String strSID = "";
+		
+		
+		
 		GrmOperate grmOperate = new GrmOperate();
+		
+		grmOperate.grmLogon();
+		grmOperate.grmGetEnumVar();
+		
 		
 		grmOperate.grmLogon();
 		grmOperate.grmGetEnumVar();
