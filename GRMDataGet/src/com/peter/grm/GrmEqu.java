@@ -2,11 +2,14 @@ package com.peter.grm;
 
 import java.util.ArrayList;
 
-public class GrmOperate {
+public class GrmEqu {
 	
-	private String strGrmID = "20437182836";
-	private String strPasswd = "32345598";
+	private String strGrmName = "";
 	
+	private String strGrmID = ""; 
+	private String strPasswd = "";
+	
+
 	private String strADDR = "";
 	private String strSID = "";
 	
@@ -18,22 +21,26 @@ public class GrmOperate {
 	private String errGetDataID ="";
 	private String errGetDataDes = "";
 	
-	private ArrayList varArray = new ArrayList();
+	private ArrayList<GrmData> varArray = new ArrayList<GrmData>();
 	
-	public GrmOperate(String ADDR, String GrmID, String Passwd, String SID)
+	public GrmEqu(String GrmName,String GrmID, String Passwd) throws Exception
 	{
-		strADDR = ADDR;
-		strGrmID = GrmID;
-		strPasswd = Passwd;
-		strSID = SID;
-	}
-	
-	public GrmOperate()
-	{
+		strGrmName = GrmName;
 		
+		if(GrmID.equals(""))
+		{
+			throw new Exception("GRM 设备ID不能为空");
+		}
+		else
+		{
+			strGrmID = GrmID;
+		}
+		
+		strPasswd = Passwd;
 	}
 	
-	public void grmLogon()
+	
+	public void grmLogon() throws Exception
 	{
 		
 		//If SID exists, we can reuse it. If it is not available, we should log in again.
@@ -43,9 +50,8 @@ public class GrmOperate {
 		}
 		
 		
+		//String sr = HttpRequest.sendPost("http://www.yunplc.com:7080/exlog", "GRM="+strGrmID+"&"+"PASS="+strPasswd);
 		String sr = HttpRequest.sendPost("http://www.yunplc.com:7080/exlog", "GRM="+strGrmID+"&"+"PASS="+strPasswd);
-		//String sr = HttpRequest.sendPost("http://www.yunplc.com:7080/exlog?GRM="+strGrmID+"&"+"PASS="+strPasswd,"");
-		
 		System.out.println(sr);
 		
 		String[] strSplit = sr.split("\n");
@@ -54,9 +60,10 @@ public class GrmOperate {
 		
 		if(isSuccessful.equals("ERROR"))
 		{
-			errLogonID  = ((strSplit[1]).split("="))[1];
-			errLogonDes = ((strSplit[2]).split("="))[1];
+			errLogonID  = strSplit[1];
+			errLogonDes = strSplit[2];
 			
+			throw new Exception("登陆设备出错:"+strSplit[1]+"--"+strSplit[2]);			
 		}
 		else if(isSuccessful.equals("OK"))
 		{
@@ -69,9 +76,9 @@ public class GrmOperate {
 	}
 	
 	
-	private void GetAvailableSID()
+	private void GetAvailableSID() throws Exception
 	{
-		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=E", "NTRPGC");
+		String sr = HttpRequest.sendGet("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=E", "NTRPGC");
 		
 		String[] strSplit = sr.split("\n");
 		
@@ -86,17 +93,22 @@ public class GrmOperate {
 			{
 				grmLogon();
 			}
+			else
+			{
+				throw new Exception("登陆设备出错:"+strSplit[1]+"--"+strSplit[2]);	
+			}
 		}
 	}
 	
 	
-	public void grmGetEnumVar()
+	public void grmGetEnumVar() throws Exception
 	{
 		GetAvailableSID();
 		
 		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=E", "NTRPGC");
 		
-		System.out.println(strSID);
+		//System.out.println(strSID);
+		System.out.println(strGrmName);
 		System.out.println(sr);
 		
 		String[] strSplit = sr.split("\n");
@@ -107,7 +119,8 @@ public class GrmOperate {
 		{
 			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
 			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
-			return;
+			
+			throw new Exception("登陆设备出错:"+strSplit[1]+"--"+strSplit[2]);	
 		}
 		
 		
