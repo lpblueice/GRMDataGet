@@ -8,5 +8,7 @@ public class GrmData {
 	public String netPermission = "";
 	public String groupName = "";
 	public String webVarDes = "";
+	
+	public String varData = "";
 		
 }

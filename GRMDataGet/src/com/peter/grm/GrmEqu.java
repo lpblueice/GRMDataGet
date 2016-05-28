@@ -78,7 +78,7 @@ public class GrmEqu {
 	
 	private void GetAvailableSID() throws Exception
 	{
-		String sr = HttpRequest.sendGet("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=E", "NTRPGC");
+		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=E", "NTRPGC");
 		
 		String[] strSplit = sr.split("\n");
 		
@@ -91,6 +91,7 @@ public class GrmEqu {
 			
 			if(Integer.parseInt(errGetDataID) == 8)//If errorcode is 8, it means the SID is not available. We should log in again.
 			{
+				System.out.println(strGrmName + "'s current SID is not available, log in again!");
 				grmLogon();
 			}
 			else
@@ -98,16 +99,21 @@ public class GrmEqu {
 				throw new Exception("µÇÂ½Éè±¸³ö´í:"+strSplit[1]+"--"+strSplit[2]);	
 			}
 		}
+		else
+		{
+			System.out.println(strGrmName + "'s current SID is available!");
+		}
 	}
 	
 	
-	public void grmGetEnumVar() throws Exception
+	private void grmEnumVarInfo() throws Exception
 	{
 		GetAvailableSID();
 		
 		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=E", "NTRPGC");
 		
-		//System.out.println(strSID);
+		
+		System.out.println("=========================Enum all var info==========================");
 		System.out.println(strGrmName);
 		System.out.println(sr);
 		
@@ -148,13 +154,60 @@ public class GrmEqu {
 			grmData.groupName =     (varPro.get(4) == null) ?  "" : varPro.get(4).trim();
 			grmData.webVarDes =     (varPro.get(5) == null) ?  "" : varPro.get(5).trim();
 			
+			
 			varArray.add(grmData);
 		}
+		
 		
 		return;
 
 	}
 	
 	
+	private void grmReadVar(ArrayList<String> varList) throws Exception
+	{
+		GetAvailableSID();
+		
+		String strRequest = new String("".getBytes(),"utf-8");
+		strRequest += varList.size() + "\n";
+		for(String varName : varList)
+		{
+			strRequest += varName + "\n";
+		}
+		
+		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=R", strRequest);
+		
+		//System.out.println(strSID);
+		System.out.println("=========================Read var==========================");
+		System.out.println(strGrmName);
+		System.out.println(sr);
+	}
+	
+	
+	private ArrayList<String> grmGetVarNameList() throws Exception
+	{
+		ArrayList<String> equVarNameList = new ArrayList<String>();
+		
+		for(GrmData var : varArray)
+		{
+			equVarNameList.add(var.varName);
+		}
+		
+		return equVarNameList;
+	}
+	
+	public void grmEnumVar() throws Exception
+	{
+		grmEnumVarInfo();
+		
+		ArrayList<String> equVarNameList = grmGetVarNameList();
+		
+		for(GrmData var : varArray)
+		{
+			equVarNameList.add(var.varName);
+		}
+		 
+		grmReadVar(equVarNameList);
+	}
 
 }
