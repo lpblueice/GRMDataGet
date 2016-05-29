@@ -1,10 +1,13 @@
 package com.peter.grm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GrmEqu {
 	
 	private String strGrmName = "";
+	public String getGrmName(){return strGrmName;}
 	
 	private String strGrmID = ""; 
 	private String strPasswd = "";
@@ -22,6 +25,7 @@ public class GrmEqu {
 	private String errGetDataDes = "";
 	
 	private ArrayList<GrmData> varArray = new ArrayList<GrmData>();
+	public ArrayList<GrmData> getGrmEquVars(){return varArray;}
 	
 	public GrmEqu(String GrmName,String GrmID, String Passwd) throws Exception
 	{
@@ -126,7 +130,7 @@ public class GrmEqu {
 			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
 			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
 			
-			throw new Exception("登陆设备出错:"+strSplit[1]+"--"+strSplit[2]);	
+			throw new Exception("枚举设备变量 信息出错:"+strSplit[1]+"--"+strSplit[2]);	
 		}
 		
 		
@@ -168,7 +172,7 @@ public class GrmEqu {
 	{
 		GetAvailableSID();
 		
-		String strRequest = new String("".getBytes(),"utf-8");
+		String strRequest = "";
 		strRequest += varList.size() + "\n";
 		for(String varName : varList)
 		{
@@ -181,6 +185,26 @@ public class GrmEqu {
 		System.out.println("=========================Read var==========================");
 		System.out.println(strGrmName);
 		System.out.println(sr);
+		
+		String[] strSplit = sr.split("\n");
+		
+		String isSuccessful = strSplit[0];
+		
+		if(isSuccessful.equals("ERROR"))
+		{
+			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
+			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			
+			throw new Exception("读取变量出错:"+strSplit[1]+"--"+strSplit[2]);	
+		}
+		
+		int num = Integer.parseInt(strSplit[1].trim());
+		
+		for(int i=2;i<strSplit.length;i++)
+		{
+			varArray.get(i-2).varData = (strSplit[i].trim() == null) ?  "" : strSplit[i].trim();
+		}
+		
 	}
 	
 	
@@ -196,18 +220,62 @@ public class GrmEqu {
 		return equVarNameList;
 	}
 	
-	public void grmEnumVar() throws Exception
+	public void grmReadAllVar() throws Exception
 	{
 		grmEnumVarInfo();
 		
 		ArrayList<String> equVarNameList = grmGetVarNameList();
 		
-		for(GrmData var : varArray)
-		{
-			equVarNameList.add(var.varName);
-		}
-		 
 		grmReadVar(equVarNameList);
+	}
+	
+	//pattern:
+	//2
+	//变量名 1
+	//变量值 1
+	//变量名 2
+	//变量值 2
+	//.....
+	public void grmWriteVar(String strRequest) throws Exception
+	{
+		GetAvailableSID();
+		
+		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=W", strRequest);
+		
+		//System.out.println(strSID);
+		System.out.println("=========================Read var==========================");
+		System.out.println(strGrmName);
+		System.out.println(sr);
+		
+		String[] strSplit = sr.split("\n");
+		
+		String isSuccessful = strSplit[0];
+		
+		if(isSuccessful.equals("ERROR"))
+		{
+			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
+			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			
+			throw new Exception("写入变量出错:"+strSplit[1]+"--"+strSplit[2]);	
+		}
+		
+		int num = Integer.parseInt(strSplit[1].trim());
+		
+		//HashMap
+		//key: index
+		//value: 0 means Success; else means Error ID.
+		HashMap<String, String> errorVar = new HashMap<String, String>(); 
+		for(int i=2;i<strSplit.length;i++)
+		{
+			if(strSplit[i].trim().equals("0"))
+			{
+				continue;
+			}
+			else
+			{
+				errorVar.put(Integer.toString(i-2), strSplit[i].trim());
+			}
+		}
 	}
 
 }

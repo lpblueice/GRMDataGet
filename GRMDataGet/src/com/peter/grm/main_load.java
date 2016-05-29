@@ -19,10 +19,25 @@ public class main_load {
 		//grmEquArr.add(new GrmEqu("天潼路", "50102582967", "dreamblue5598"));
 		
 		
+		
 		for (GrmEqu grmEqu : grmEquArr) 
 		{
 			grmEqu.grmLogon();
-			grmEqu.grmEnumVar();
+			grmEqu.grmReadAllVar();
+			
+			System.out.println("==============================" + grmEqu.getGrmName() + " data============================");
+			for(GrmData grmData : grmEqu.getGrmEquVars())
+			{
+				System.out.println(grmData.varName + "," + grmData.varData);
+			}
+			
+			
+			System.out.println("==============================" + "Write var to grm equ" + "===============================");
+			String strRequest = "";
+			strRequest += "1\n";
+			strRequest += "新天地站台指数\n";
+			strRequest += "21\n";
+			grmEqu.grmWriteVar(strRequest);
 		}
 	}
 	
