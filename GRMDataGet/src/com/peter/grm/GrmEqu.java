@@ -94,8 +94,8 @@ public class GrmEqu {
 		
 		if(isSuccessful.equals("ERROR"))
 		{
-			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
-			errGetDataDes = ((strSplit[2]).split("="))[1].trim();			
+			errGetDataID  = (strSplit[1]).trim();
+			errGetDataDes = (strSplit[2]).trim();		
 			
 			if(Integer.parseInt(errGetDataID) == 8)//If errorcode is 8, it means the SID is not available. We should log in again.
 			{
@@ -131,8 +131,8 @@ public class GrmEqu {
 		
 		if(isSuccessful.equals("ERROR"))
 		{
-			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
-			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			errGetDataID  = (strSplit[1]).trim();
+			errGetDataDes = (strSplit[2]).trim();
 			
 			throw new Exception("枚举设备变量 信息出错:"+strSplit[1]+"--"+strSplit[2]);	
 		}
@@ -196,8 +196,8 @@ public class GrmEqu {
 		
 		if(isSuccessful.equals("ERROR"))
 		{
-			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
-			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			errGetDataID  = (strSplit[1]).trim();
+			errGetDataDes = (strSplit[2]).trim();
 			
 			throw new Exception("读取变量出错:"+strSplit[1]+"--"+strSplit[2]);	
 		}
@@ -257,8 +257,8 @@ public class GrmEqu {
 		
 		if(isSuccessful.equals("ERROR"))
 		{
-			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
-			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			errGetDataID  = (strSplit[1]).trim();
+			errGetDataDes = (strSplit[2]).trim();
 			
 			throw new Exception("写入变量出错:"+strSplit[1]+"--"+strSplit[2]);	
 		}
@@ -300,8 +300,8 @@ public class GrmEqu {
 		
 		if(isSuccessful.equals("ERROR"))
 		{
-			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
-			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			errGetDataID  = (strSplit[1]).trim();
+			errGetDataDes = (strSplit[2]).trim();
 			
 			throw new Exception("获取设备地理位置出错:"+strSplit[1]+"--"+strSplit[2]);	
 		}
