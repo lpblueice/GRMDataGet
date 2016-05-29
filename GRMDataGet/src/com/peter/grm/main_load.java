@@ -32,12 +32,24 @@ public class main_load {
 			}
 			
 			
-			System.out.println("==============================" + "Write var to grm equ" + "===============================");
-			String strRequest = "";
-			strRequest += "1\n";
-			strRequest += "新天地站台指数\n";
-			strRequest += "21\n";
-			grmEqu.grmWriteVar(strRequest);
+//			System.out.println("==============================" + "Write var to grm equ" + "===============================");
+//			String strRequest = "";
+//			strRequest += "1\n";
+//			strRequest += "新天地站台指数\n";
+//			strRequest += "21\n";
+//			grmEqu.grmWriteVar(strRequest);
+			
+			grmEqu.grmGetLocation();
+			System.out.println("==============================" + "Get grm equ location" + "===============================");
+			System.out.println(grmEqu.getGrmLocationInfo().originData);
+			System.out.println(grmEqu.getGrmLocationInfo().longtitude);
+			System.out.println(grmEqu.getGrmLocationInfo().lantitude);
+			System.out.println(grmEqu.getGrmLocationInfo().province);
+			System.out.println(grmEqu.getGrmLocationInfo().city);
+			System.out.println(grmEqu.getGrmLocationInfo().district);
+			System.out.println(grmEqu.getGrmLocationInfo().street);
+			System.out.println(grmEqu.getGrmLocationInfo().fullLocation);
+			System.out.println(grmEqu.getGrmLocationInfo().nearMarkPoint);
 		}
 	}
 	

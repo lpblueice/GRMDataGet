@@ -27,6 +27,10 @@ public class GrmEqu {
 	private ArrayList<GrmData> varArray = new ArrayList<GrmData>();
 	public ArrayList<GrmData> getGrmEquVars(){return varArray;}
 	
+	private GrmLocationInfo grmLocationInfo = new GrmLocationInfo();
+	public GrmLocationInfo getGrmLocationInfo() {return grmLocationInfo;}
+
+	
 	public GrmEqu(String GrmName,String GrmID, String Passwd) throws Exception
 	{
 		strGrmName = GrmName;
@@ -276,6 +280,56 @@ public class GrmEqu {
 				errorVar.put(Integer.toString(i-2), strSplit[i].trim());
 			}
 		}
+	}
+	
+	
+	public void grmGetLocation() throws Exception
+	{
+		GetAvailableSID();
+		
+		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=L", "");
+		
+		//System.out.println(strSID);
+		System.out.println("=========================Get Grm Location==========================");
+		System.out.println(strGrmName);
+		System.out.println(sr);
+		
+		String[] strSplit = sr.split("\n");
+		
+		String isSuccessful = strSplit[0];
+		
+		if(isSuccessful.equals("ERROR"))
+		{
+			errGetDataID  = ((strSplit[1]).split("="))[1].trim();
+			errGetDataDes = ((strSplit[2]).split("="))[1].trim();
+			
+			throw new Exception("获取设备地理位置出错:"+strSplit[1]+"--"+strSplit[2]);	
+		}
+		
+		int num = Integer.parseInt(strSplit[1].trim());
+		
+		if(num == 9)
+		{
+			grmLocationInfo.originData =    (strSplit[2] == null) ?  "" : strSplit[2].trim(); //2;460;0; 2508;6F19;20;2508;0A83;10; （基站原始数据）
+			grmLocationInfo.longtitude=     (strSplit[3] == null) ?  "" : strSplit[3].trim();//113.4009 （坐标：经度）
+			grmLocationInfo.lantitude =     (strSplit[4] == null) ?  "" : strSplit[4].trim();//23.1310 （坐标：纬度）
+			grmLocationInfo.province =      (strSplit[5] == null) ?  "" : strSplit[5].trim();//广东省 （位置：省/自治区/直辖市）
+			grmLocationInfo.city =          (strSplit[6] == null) ?  "" : strSplit[6].trim();//广州市 （位置：地/市）
+			grmLocationInfo.district =      (strSplit[7] == null) ?  "" : strSplit[7].trim();//天河区 （位置：区/县）
+			grmLocationInfo.street =        (strSplit[8] == null) ?  "" : strSplit[8].trim();//车陂路 300 号 （位置：乡镇/街道）
+			grmLocationInfo.fullLocation =  (strSplit[9] == null) ?  "" : strSplit[9].trim();//广东省广州市天河区车陂路 362 号 （完整的位置字符串）
+			grmLocationInfo.nearMarkPoint = (strSplit[10] == null) ?  "" : strSplit[10].trim();//时尚明苑 （临近标志点）
+		}
+		else if(num == 1)
+		{
+			grmLocationInfo.originData =    (strSplit[2] == null) ?  "" : strSplit[2].trim();
+		}
+		else if(num == 0) 
+		{
+			
+		}
+
+		
 	}
 
 }
