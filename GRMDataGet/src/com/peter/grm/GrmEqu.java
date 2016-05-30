@@ -327,9 +327,27 @@ public class GrmEqu {
 		else if(num == 0) 
 		{
 			
-		}
-
+		}		
+	}
+	
+	public void grmGetGrmHistory() throws Exception
+	{
+		GetAvailableSID();
 		
+		 String sbegin = "20160528000000";//"yyyyMMddhhmmss";
+		 String send = "20160529000000";
+		 String inc = "+"; //isinc ? "+" : "-";
+		 String val = sbegin + "\r\n" + send + "\r\n" + inc + "\r\n";
+		 String valname = "$NetState";
+		 int maxcnt = 10;
+		 val += valname + "\r\n" + maxcnt;
+
+		String sr = HttpRequest.sendPost("http://"+strADDR+"/exdata?SID="+strSID+"&"+"OP=H", val);
+		
+		//System.out.println(strSID);
+		System.out.println("=========================Get Grm History==========================");
+		System.out.println(strGrmName);
+		System.out.println(sr);
 	}
 
 }
